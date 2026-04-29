@@ -1,0 +1,88 @@
+---
+title: "Data 211 Project"
+author: "Kofi Owusu"
+date: "2026-04-28"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Load library
+library(ggplot2)
+library(readxl)
+```
+
+
+```{r}
+#data
+sleep_data <- read_excel("sleep_data.xlsx", range = "A1:B22")
+```
+
+## Summary Statistics
+```{r}
+summary(sleep_data$sleep_hours)
+sd(sleep_data$sleep_hours)
+```
+## Visualization
+
+```{r}
+# Line Graph
+ggplot(sleep_data, aes(x = day, y = sleep_hours)) +
+  geom_line(color = "purple", size = 1) +
+  geom_point(color = "black", size = 2.5) +
+  geom_hline(yintercept = mean(sleep_data$sleep_hours),
+             linetype = "dashed", color = "red") +
+  labs(
+    title = "Daily Sleep Hours – April 5 to April 25",
+    x = "Day",
+    y = "Hours of Sleep"
+  ) +
+  scale_x_continuous(breaks = 1:21) +
+  theme_minimal()
+```
+The line graph shows my nightly sleep hours fluctuating throughout the 21-day period. There is no consistent pattern. Some nights I slept well above average while others dropped significantly. Most nights fall between 6 and 8 hours, with day 9 being the highest at 10.5 hours and day 8 being the lowest at 3.5 hours
+
+
+```{r}
+#BoxPlot
+ggplot(sleep_data, aes(y = sleep_hours)) +
+  geom_boxplot(fill = "purple", color = "black", width = 0.4) +
+  geom_hline(yintercept = 8, linetype = "dashed", color = "red") +
+  labs(
+    title = "Sleep Hours: Spread and Variability",
+    x = " ",
+    y = "Hours of Sleep"
+  ) +
+  theme_minimal() 
+```
+The box plot shows that the median sleep is 7.0 hours and the middle 50% of nights fall roughly between 5.5 and 8.0 hours. The dashed line at 8 hours shows that my median sits below the recommended amount. The spread of the box indicates moderate variability in my sleep habits.
+
+
+```{r}
+#Scatterplot
+ggplot(sleep_data, aes(x = day, y = sleep_hours)) +
+  geom_point(color = "purple", size = 3) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  geom_hline(yintercept = 8, linetype = "dashed", color = "purple") +
+  labs(
+    title = "Sleep Trend Over 21 Days",
+    x = "Day",
+    y = "Hours of Sleep"
+  ) +
+  scale_x_continuous(breaks = 1:21) +
+  theme_minimal()
+```
+The trend line shows a slight upward slope, suggesting my sleep hours marginally increased over the 21-day period. However, the high variability among the data points indicates this trend is weak and not conclusive.
+
+
+## Statistical Test
+
+```{r}
+t.test(sleep_data$sleep_hours, mu = 8, alternative = "two.sided")
+
+```
+## Interpretation
+The one-sample t-test produced a t-statistic of -2.902 and a p-value of 0.0088, which is below the significance level of 0.05. I reject the null hypothesis. There is strong statistical evidence that my average nightly sleep of 6.88 hours is significantly less than the recommended 8 hours.
